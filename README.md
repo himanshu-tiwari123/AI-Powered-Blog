@@ -1,4 +1,7 @@
-# React + Vite
+# AI-Powered-Blog
+AI-Powered Blogging Platform (MERN + Gemini API) ✨ A smart blogging platform that leverages Google's Gemini AI for automated content generation, SEO optimization, and personalized recommendations—built with the MERN stack (MongoDB, Express, React, Node.js).
+
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
