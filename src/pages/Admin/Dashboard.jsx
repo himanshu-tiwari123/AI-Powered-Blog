@@ -69,9 +69,9 @@ const Dashboard = () => {
             <p className='mt-1 text-xl'>Latest Blogs</p>
           </div>
 
-          <div className='relative max-w-4xl overflow-x-auto shadow rounded-lg scrollbar-hide bg-orange-500'>
-            <table className='w-full text-sm text-white '>
-              <thead className='text-xs text-white text-left uppercase'>
+          <div className='relative max-w-4xl overflow-x-auto shadow rounded-lg scrollbar-hide bg-white-500'>
+            <table className='w-full text-sm text-gray-700 '>
+              <thead className='text-xs text-gray-700 text-left uppercase'>
                 <tr>
                   <th scope='col' className='px-2 py-4 xl:px-6'> # </th>
                   <th scope='col' className='px-2 py-4'> Blog Title </th>
@@ -82,7 +82,7 @@ const Dashboard = () => {
               </thead>
               <tbody>
                 {dashboardData.recentBlogs.map((blog,index)=>{
-                   return <BlogTableItem/>
+                   return <BlogTableItem key={blog._id} blog={blog} fetchBlogs={fetchDashboardData} index={index+1}/>
                 })}
               </tbody>
             </table>
