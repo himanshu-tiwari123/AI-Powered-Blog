@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { comments_data } from '../../assets/assets';
+import { CommentTableItem } from '../../components/admin/CommentTableItem';
 
 const Comment = () => {
   const [comments,setComments] = useState([]);
@@ -15,7 +16,7 @@ const Comment = () => {
 
 
   return (
-    <div className='flex-1 pt-5 px=5 sm:pt-12 sm:pl-16 md:pl-70 bg-white-300/50'>
+    <div className='flex-1 pt-5 px-5 sm:pt-12 sm:pl-16 md:pl-70 bg-white-300/50'>
        <div className='flex justify-between items-center max-w-3xl'>
         <h1>Comments</h1>
           <div className='flex gap-4'>
@@ -41,7 +42,15 @@ const Comment = () => {
               </tr>
             </thead>
             <tbody>
-              
+              {comments.filter((comment)=>{
+                  if(filter == 'Approved'){
+                    return comment.isApproved === true;
+                  }
+                  return comment.isApproved === false;
+              }).map((comment,index)=>{
+                return <CommentTableItem key={comment._id} comment={comment} index={index+1}
+                fetchComments = {fetchComments}/>
+              })}
             </tbody>
           </table>
        </div>

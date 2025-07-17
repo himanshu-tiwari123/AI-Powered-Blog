@@ -8,6 +8,7 @@ import ListBlog from './pages/Admin/ListBlog'
 import Comments from './pages/Admin/Comments'
 import Layout from './pages/Admin/Layout'
 import Login from './components/admin/Login'
+import 'quill/dist/quill.snow.css'
 
 const App = () => {
   return (
