@@ -1,5 +1,6 @@
 import fs from 'fs'
 import imagekit from '../config/imageKit.js';
+import Blog from '../models/blog.js';
 
 export const addBlog = async (req,res)=>{
     try {
@@ -35,8 +36,97 @@ export const addBlog = async (req,res)=>{
 
        })
 
+       const image = optimizedImageURL;
+
+       await Blog.create({title,subTitle,description,category,image,isPublished});
+
+       res.json({
+        success:true,
+        message:"Blog added Successfully"
+       })
+
        
     } catch (error) {
-      
+       res.json({
+        success:false,
+        message: error.message,
+       })
+    }
+}
+
+export const getAllBlogs = async(req,res)=>{
+    try {
+        const blogs = await Blog.find({isPublished : true})
+        res.json({
+            success:true,
+            blogs
+        })
+    } catch (error) {
+        res.json({
+            success:false,
+            message:error.message,
+        })
+    }
+}
+
+export const getBlogById = async(req,res)=>{
+    try {
+        const {blogId} = req.params;
+        const blog = await Blog.findById(blog);
+        if(!blog){
+            return res.json({
+                success:false,
+                message:"Blog not found",
+            })
+        }
+
+        res.send({
+            success:false,
+            blog,
+        })
+    } catch (error) {
+        res.json({
+            success:false,
+            message:error.message,
+        })
+    }
+}
+
+export const deleteBlogById = async(req,res)=>{
+    try {
+        const {id} = req.body;
+        
+        await Blog.findByIdAndDelete(id);
+
+        res.send({
+            success:false,
+            message:'Deleted Successfully',
+        })
+    } catch (error) {
+        res.json({
+            success:false,
+            message:error.message,
+        })
+    }
+}
+
+export const togglePublish = async(req,res)=>{
+    try {
+        const {id} = req.body;
+        const blog = await Blog.findById(id);
+        blog.isPublished = !blog.isPublished;
+
+        await blog.save();
+
+        res.json({
+            success:true,
+            message:'Blog status updated successfully'
+        })
+        
+    } catch (error) {
+        res.json({
+            success:false,
+            message:error.message,
+        })
     }
 }
