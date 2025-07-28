@@ -5,9 +5,12 @@ import Navbar from '../components/Navbar';
 import Moment from 'moment';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
+import { useAppContext } from '../context/AppContext';
 
 const Blogs = () => {
   const {id} = useParams();
+  const {axios} = useAppContext();
+
   const [data,setData] = useState(null);
   const [comments,setComments] = useState([]);
 
@@ -17,32 +20,42 @@ const Blogs = () => {
 
   const addComment = async(e)=>{
     e.preventDefault();
-    if(!name.trim() || !content.trim()) return;
+    try {
+      const {data} = await axios.post(`/api/blog/add-comment`,{blog:id, name,content});
 
-    const newComment = {
-      name,
-      content,
-      createdAt:new Date().toISOString(),
+      if(data.success){
+        toast.success(data.message);
+        setName('');
+        setContent('');
+      }else{
+        toast.error(data.message);
+      }
+      
+    } catch (error) {
+      toast.error(error.message);
     }
-
-    setComments([newComment, ...comments]);
-    setName('');
-    setContent('');
   }
 
   const fetchComments = async()=>{
-    setComments(
-      comments_data
-    )
+    try {
+      const {data} = await axios.post(`/api/blog/comments`,{blogId:id})
+      if(data.success){
+        setComments(data.comments);
+      }else{
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   }
 
   const fetchBlogData = async()=>{
     try{
-      const data =  blog_data.find(item => item._id  === id );
-      setData(data);
+      const {data} = await axios.get(`/api/blog/${id}`);
+      data.success ? setData(data.blog) : toast.error(data.message);
     }
     catch(error){
-      console.error("Error fetching blog data:",error);
+      toast.error(error.message);
     }
   }
   useEffect(()=>{
