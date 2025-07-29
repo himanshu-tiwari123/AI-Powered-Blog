@@ -17,9 +17,11 @@ const Login = () => {
         const {data} = await axios.post('/api/admin/login',{email,password});
 
         if(data.success ){
-          setToken(data.token);
-          localStorage.setItem('token',data.token);
-          axios.defaults.headers.common['Authorization'] = data.token;
+          const token = data.token;
+          setToken(token);
+          localStorage.setItem('token', token);
+          // include "Bearer "
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         }else{
           toast.error(data.message);
         }

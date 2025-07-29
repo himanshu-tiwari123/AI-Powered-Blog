@@ -6,6 +6,7 @@ import Moment from 'moment';
 import Footer from '../components/Footer';
 import Loader from '../components/Loader';
 import { useAppContext } from '../context/AppContext';
+import toast from 'react-hot-toast';
 
 const Blogs = () => {
   const {id} = useParams();
@@ -61,7 +62,7 @@ const Blogs = () => {
   useEffect(()=>{
      fetchBlogData();
      fetchComments();
-  },[])
+  },[id])
 
   return  data ? (
     
@@ -97,9 +98,9 @@ const Blogs = () => {
             </div>
         </div>
           {/* Add comment section */}
-          <div onSubmit={addComment} className='max-w-3xl mx-auto '>
+          <div  className='max-w-3xl mx-auto '>
             <p className='font-semibold mb-4 text-xl'>Add your Comment :</p>
-            <form  className='flex flex-col items-start gap-4 max-w-lg'>
+            <form  onSubmit={addComment} className='flex flex-col items-start gap-4 max-w-lg'>
               <input onChange={(e)=>setName(e.target.value)} value={name} type="text" placeholder='Name' required className='w-full p-2 border border-gray-300 rounded '/>
               <textarea onChange={(e)=>setContent(e.target.value)} value={content} placeholder='Type your Comment...' className='w-full p-2 border border-gray-300 rounded  h-50'></textarea>
               <button type='submit' className='border border-gray-300 rounded-md px-5 py-2 bg-purple-500 cursor-pointer hover:scale-105'>Submit</button>

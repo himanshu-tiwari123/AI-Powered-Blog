@@ -30,12 +30,15 @@ export const AppProvider = ({children})=>{
 
 
     useEffect(()=>{
-        fetchBlogs();
+        
         const token = localStorage.getItem('token');
+        if (!token) return toast.error("No token found");
+
         if(token){
             setToken(token);
             axios.defaults.headers.common['Authorization'] = `${token}`;
         }
+        fetchBlogs();
     },[])
 
     const value ={
