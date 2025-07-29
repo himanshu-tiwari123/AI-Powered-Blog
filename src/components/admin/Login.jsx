@@ -1,14 +1,33 @@
 import React, { useState } from 'react'
-
+import { useAppContext } from '../../context/AppContext';
+import toast from 'react-hot-toast';
 
 
 const Login = () => {
 
+  const {axios,setToken} = useAppContext();
+
+
   const [email,setEmail] = useState('');
-  const [pasword,setPassword] = useState('');
+  const [password,setPassword] = useState('');
 
   const handleSubmit=async(e)=>{
       e.preventDefault();
+      try {
+        const {data} = await axios.post('/api/admin/login',{email,password});
+
+        if(data.success ){
+          const token = data.token;
+          setToken(token);
+          localStorage.setItem('token', token);
+          // include "Bearer "
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }else{
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
   }
 
   return (
@@ -22,14 +41,14 @@ const Login = () => {
             <form onSubmit={handleSubmit}>
               <div className='flex flex-col gap-2'>
                 <label htmlFor="email">Email : </label>
-                <input onChange={()=>setEmail(e.target.value)} value={email} 
+                <input onChange={(e)=>setEmail(e.target.value)} value={email} 
                   type="email" required placeholder='Enter your Email Id'
                 className='border-b-2 border-gray-300 p-3 mb-6'/>
               </div>
 
               <div className='flex flex-col gap-2'>
                 <label htmlFor="email">Password : </label>
-                <input onChange={()=>setPassword(e.target.value)} value={pasword} 
+                <input onChange={(e)=>setPassword(e.target.value)} value={password} 
                    type="password" required placeholder='Enter your Password'
                 className='border-b-2 border-gray-300 p-3 mb-6 ml-2'/>
               </div>
