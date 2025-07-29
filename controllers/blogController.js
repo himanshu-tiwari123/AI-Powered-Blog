@@ -1,6 +1,8 @@
 import fs from 'fs'
 import imagekit from '../config/imageKit.js';
 import Blog from '../models/blog.js';
+import Comment from '../models/comment.js';
+import main from '../config/gemini.js';
 
 export const addBlog = async (req,res)=>{
     try {
@@ -18,7 +20,7 @@ export const addBlog = async (req,res)=>{
        //now as all fiels are available lets store them in MongoDB:
 
        const fileBuffer = fs.readFileSync(imageFile.path);
-       const respone = await imagekit.upload({
+       const uploadResponse = await imagekit.upload({
         file:fileBuffer,
         fileName:imageFile.originalname,
         folder:"/blogs",
@@ -26,7 +28,7 @@ export const addBlog = async (req,res)=>{
 
        //optimization through imagekit URL transformation:
        const optimizedImageURL = imagekit.url({
-        path:res.filePath,
+        path:uploadResponse.filePath,
         transformation:[
             {quality:'auto'}, // Auto compression
             {format : 'webp'},//Convert to modern format
@@ -72,7 +74,7 @@ export const getAllBlogs = async(req,res)=>{
 export const getBlogById = async(req,res)=>{
     try {
         const {blogId} = req.params;
-        const blog = await Blog.findById(blog);
+        const blog = await Blog.findById(blogId);
         if(!blog){
             return res.json({
                 success:false,
@@ -81,7 +83,7 @@ export const getBlogById = async(req,res)=>{
         }
 
         res.send({
-            success:false,
+            success:true,
             blog,
         })
     } catch (error) {
@@ -97,6 +99,10 @@ export const deleteBlogById = async(req,res)=>{
         const {id} = req.body;
         
         await Blog.findByIdAndDelete(id);
+
+        //We need to deleted all comments as well:
+
+        await Comment.deleteMany({blog :id});
 
         res.send({
             success:false,
@@ -134,7 +140,11 @@ export const togglePublish = async(req,res)=>{
 export const addComment = async(req,res)=>{
     try {
         const {blog,name,content} = req.body;
-        await 
+        await Comment.create({blog,name,content});
+        res.json({
+            success:true,
+            message:'Comment added for review'
+        })
         
     } catch (error) {
         res.json({
@@ -143,3 +153,57 @@ export const addComment = async(req,res)=>{
         })
     }
 }
+
+export const getBlogComments = async(req,res)=>{
+    try {
+        const {blogId} = req.body;
+        const comments = await Comment.find({blog:blogId, isApproved:true}).sort({createdAt:-1});
+
+        res.json({
+            success:true,
+            comments,
+        })
+        
+        
+    } catch (error) {
+        res.json({
+            success:false,
+            message:error.message,
+        })
+    }
+}
+
+export const generateContent = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.json({
+        success: false,
+        message: "Prompt is missing",
+      });
+    }
+
+    const fullPrompt = `
+      Write a detailed, engaging blog post on: "${prompt}".
+      - Keep the information up to date and based on recent events or trends.
+      - Include a compelling title.
+      - Use a professional yet friendly tone.
+      - Structure it with an introduction, main content (2–3 sections), and a conclusion.
+      - Format in Markdown.
+      - Avoid hallucinating facts. Keep the tone professional.
+    `;
+
+    const content = await main(fullPrompt);
+
+    res.json({
+      success: true,
+      content,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Environment
 .env
 .env.local
@@ -10,9 +11,16 @@ node_modules/
 dist/
 build/
 
+=======
+# Environment files
+.env
+.env.*.local
+
+>>>>>>> 5a5664609a0f51c10df38ddecd1ab363c29da68d
 # Logs
 logs/
 *.log
+<<<<<<< HEAD
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -28,6 +36,33 @@ package-lock.json
 yarn.lock
 
 # Miscellaneous
+=======
+
+# Dependency directories
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# OS & editor
+.DS_Store
+.vscode/
+.idea/
+
+# Lockfiles (if you prefer to regenerate rather than track)
+# (only do this if you’re comfortable regenerating them after pulls)
+package-lock.json
+client/package-lock.json
+server/package-lock.json
+
+# Optional npm cache
+.npm/
+
+# Other
+>>>>>>> 5a5664609a0f51c10df38ddecd1ab363c29da68d
 *.suo
 *.ntvs*
 *.njsproj
