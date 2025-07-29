@@ -1,16 +1,13 @@
 import mongoose from "mongoose";
 //Generate Schema:
 const commentSchema = new mongoose.Schema({
-    title:{type:String,required:true},
-    subTitle:{type:String},
-    description:{type:String,required:true},
-    category:{type:String,required:true},
-    image:{type:String,required:true},
-    isPublished:{type:Boolean,required:true},
-    
+    blog:{type:mongoose.Schema.Types.ObjectId, ref:'blog',require:true},
+    name:{type:String ,required:true},
+    content:{type:String,required:true},
+    isApproved:{type:Boolean,default:false},
 
 },{timestamps:true});
 //Create Model:
-const Comment = mongoose.model('blog',blogSchema)
+const Comment = mongoose.model('Comment',commentSchema)
 
 export default Comment;
